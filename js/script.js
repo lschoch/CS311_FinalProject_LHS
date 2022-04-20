@@ -5,7 +5,6 @@ addValueInFocusEvents();
 addConvertBtnClickEvents();
 
 function addValueInFocusEvents() {
-    /* document.querySelector('input[name=""]:checked').value; */
     document.querySelector('#value-in').addEventListener('focus', () => {
             clearResult();
     });
@@ -17,21 +16,26 @@ function addConvertBtnClickEvents() {
     });
 }
 
+// Reset result for the next conversion when value box gets focus.
 function clearResult() {
     document.querySelector('#result').innerHTML = '______________';
 }
 
+// Main conversion engine.
 function convert() {
     const toBeConverted = document.querySelector('#value-in').value;
     const result = document.querySelector('#result');
     const buttons = document.querySelectorAll('input[name="conv-type"]');
     var converted = 0;
+    // Get value of the checked button.
     for (const button of buttons) {
         if (button.checked) {
             type = button.value;
             break;
         }
     }
+
+
     if (type === '') {
         alert("Please select a conversion type.");
         return;
@@ -144,7 +148,7 @@ function decFormat(num, places) {
 
 /* To count the number of decimals in the value to be converted so that 
 converted value will have the same accuracy up to the limit of the conversion
-accuracy. */
+accuracy. This function was copied from the Internet but it is easy to understand. */
 function decCount(num) {
     // Convert to String
     const numStr = String(num);
