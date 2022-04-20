@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    <title>Unit Converter</title>
+</head>
+<body>
+    <div id="main" class="flex-container">
+        <div id="title" class="flex-item">
+            <H2>Unit Converter</H2>
+        </div> 
+        <div class="flex-item">
+            <H4>Select the conversion type:</H4>
+        </div>
+        <div id="buttons" class="flex-item">
+            <div class="grid">
+                <div id="1">
+                    <input type="radio" name="conv-type" value="m-ft" id="m-ft">
+                    <label for="m-ft">meters to feet</label>
+                </div>
+                <div id="2">
+                    <input type="radio" name="conv-type" value="ft-m" id="ft-m">
+                    <label for="ft-m">feet to meters</label>
+                </div>
+                <div id="3">
+                    <input type="radio" name="conv-type" value="km-mi" id="km-mi">
+                    <label for="km-mi">kilometers to miles</label>
+                </div>
+                <div id="4">
+                    <input type="radio" name="conv-type" value="mi-km" id="mi-km">
+                    <label for="mi-km">miles to kilometers</label>
+                </div>
+                <div id="5">
+                    <input type="radio" name="conv-type" value="C-F" id="C-F">
+                    <label for="C-F">Celsius to Farenheit</label>
+                </div>
+                <div id="6">
+                    <input type="radio" name="conv-type" value="F-C" id="F-C">
+                    <label for="F-C">Farenheit to Celsius</label>
+                </div>
+                <div id="7">
+                    <input type="radio" name="conv-type" value="kg-lb" id="kg-lb">
+                    <label for="kg-lb">kilograms to pounds</label>
+                </div>
+                <div id="8">
+                    <input type="radio" name="conv-type" value="lb-kg" id="lb-kg">
+                    <label for="lb-kg">pounds to kilograms</label>
+                </div>
+                <div id="9">
+                    <input type="radio" name="conv-type" value="gm-oz" id="gm-oz">
+                    <label for="gm-oz">grams to ounces</label>
+                </div>
+                <div id="10">
+                    <input type="radio" name="conv-type" value="oz-gm" id="oz-gm">
+                    <label for="oz-gm">ounces to grams</label>
+                </div>
+            </div> <!-- end grid -->
+        </div> <!-- end buttons -->
+        <div id="input-div" class="flex-item">
+            <div id="enter">
+                <H4>Enter the numerical value to convert (without units).</H4>
+                <H4>Click button for result.</H4>
+            </div>
+            <div class="input-row">
+                <div id="input">
+                    <input type="text" id="value-in">
+                </div>
+                <div>
+                    <input type="button" id="convert-btn" value="Convert"/>
+                </div>
+            </div>
+        </div> <!-- end input-div -->
+        <div id="output-div" clas="flex-item">
+            <div id="result-div">
+                <H3 id="result">______________</H3>
+            </div>
+        </div> <!-- end output-div -->
+    </div> <!-- end main -->
+    <script src="js/script.js" type="text/javascript"></script>
+</body>
+</html>
