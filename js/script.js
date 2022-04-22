@@ -31,7 +31,6 @@ function clearResult() {
 
 // Reset valueToBeConverted on button click.
 function clearValToBeConverted() {
-    console.log('clear val to be converted')
     document.querySelector('#value-in').value = '';
 }
 
@@ -200,6 +199,7 @@ function getSignificantDigitCount(n) {
             n = Math.abs(String(n).replace(".", "")); //remove decimal and make positive
             if (n == 0) return 0;
             count = Math.floor(Math.log(n) / log10) + 1; //get number of digits
+            //console.log(`Count = ${count}`);
             return count;
     }
 }
