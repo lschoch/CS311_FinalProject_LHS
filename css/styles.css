@@ -76,7 +76,6 @@ H3 {
     margin-left: 40px;
 }
 
-#result {
+span, #result {
     text-decoration: underline;
-    text-decoration-color: white;
 }
