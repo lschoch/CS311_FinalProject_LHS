@@ -3,11 +3,12 @@ var places = 0; // Accuracy of the output.
 
 addValueInFocusEvents();
 addConvertBtnClickEvents();
-addRadioBtnClickEvents();
+addRadioBtnChangeEvents();
 
 function addValueInFocusEvents() {
     document.querySelector('#value-in').addEventListener('focus', () => {
             clearResult();
+            clearValToBeConverted();
     });
 }
 
@@ -17,11 +18,13 @@ function addConvertBtnClickEvents() {
     });
 }
 
-function addRadioBtnClickEvents() {
-    const button = document.querySelectorAll('button');
-    buttons.addEventListener('click', () => {
-        clearValToBeConverted();
-    });
+function addRadioBtnChangeEvents() {
+    const radios = document.querySelectorAll('[name="conv-type"]');
+    for (const radio of radios)
+        radio.addEventListener('change', () => {
+            clearResult();
+            clearValToBeConverted();
+        });
 }
 
 // Reset result for the next conversion when value box gets focus.
@@ -32,6 +35,7 @@ function clearResult() {
 // Reset valueToBeConverted on button click.
 function clearValToBeConverted() {
     document.querySelector('#value-in').value = '';
+    document.querySelector('#value-in').focus();
 }
 
 // Main conversion engine.
@@ -100,6 +104,8 @@ function convert() {
             converted = 9*toBeConverted/5+32; // By definition, precision unlimited.
             places = getSignificantDigitCount(toBeConverted); /* Precision depends on 
                 that of the value to be converted. */
+            if (toBeConverted == 0)
+                places = fcPlaces(toBeConverted);
             converted = Number(converted).toPrecision(places);
             result.innerHTML = `${toBeConverted} Centigrade = ${converted} Farenheit`;
             break;
@@ -108,6 +114,8 @@ function convert() {
             converted = 5*(toBeConverted-32)/9; // By definition, precision unlimited.
             places = getSignificantDigitCount(toBeConverted); /* Precision depends on 
                 that of the value to be converted. */
+            if (toBeConverted == 0)
+            places = fcPlaces(toBeConverted);
             converted = Number(converted).toPrecision(places);
             result.innerHTML = `${toBeConverted} Farenheit = ${converted} Centigrade`;
             break;
@@ -160,46 +168,94 @@ function convert() {
     of the conversion factor, whichever is less. Much assistance here from the 
     Internet. */
 function getSignificantDigitCount(n) {
-    let log10 = Math.log(10);
     let count = 0;
-    let decIndex = -2; // Index of decimal point starts at -2.
+    let decIndex = -2;
     let str = String(n);
     let len = str.length;
-    if (str === '0' || str === '0.')
+
+    console.log('*******************');
+    console.log(`original str: ${str}`);
+    if (n == 0) {
+        console.log('n = 0 - one sig figure');
+        console.log('(special handling for F-C and C-F)')
         return 1; 
+    }
+
+    // Remove minus sign, if present
+    str = str.replace('-','');
+    console.log(`remove minus, if present: ${str}`);
+    str = removeLeadingZeroes(str);
+    console.log(`removeLeadingZeroes: ${str}`);
+
+    len = str.length;
     // Determine index of decimal point.
     for (let i=0; i<len; i++) {
         if (str[i] == '.')
+            // Set decIndex to -1 when decimal is last character.
             if (i == len - 1)
-                decIndex = -1 // Decimal point is last character.
+                decIndex = -1 
+            // Otherwise set decIndex to i.
             else
                 decIndex = i;
+                // decIndex will be 0 when decimal is first character. 
     }
+    console.log(`decIndex: ${decIndex}`);
 
-    // Remove decimal and make positive
-    n = Math.abs(String(n).replace(".", "")); 
-    if (n == 0) return 0;
+    // Remove decimal point.
+    str = str.replace(".", ""); 
+    console.log(`remove decimal, if present: ${str}`);
+
     switch (decIndex) {
-        case 0 || -1: /* Decimal point is  first character or last character.
-            Count remaining digits, ignore leading zeroes. */
-            /* while (n != 0 && n % 10 == 0) n /= 10; //kill the 0s at the end of n */
-            count = Math.floor(Math.log(n) / log10) + 1; //get number of digits
-            return count;
-        
-        case -2: /* No decimal point. Count digits ignoring leading and trailing
-            zeroes. */
-            n = Math.abs(String(n).replace(".", "")); //remove decimal and make positive
-            if (n == 0) return 0;
-            while (n != 0 && n % 10 == 0) n /= 10; //kill the 0s at the end of n
-            count = Math.floor(Math.log(n) / log10) + 1; //get number of digits
+        case 0: /* Decimal point was the first character. Must remove leading 
+            zeroes again and count remaining digits. */
+            str = removeLeadingZeroes(str);
+            console.log(`Decimal was first char, remove leading zeroes again: ${str}`);
+            count = str.length;
             return count;
 
-        default: /* Decimal point present but not first or last character. Don't 
-            ignore trailing zeroes; i.e., right of decimal point. */
-            n = Math.abs(String(n).replace(".", "")); //remove decimal and make positive
-            if (n == 0) return 0;
-            count = Math.floor(Math.log(n) / log10) + 1; //get number of digits
-            //console.log(`Count = ${count}`);
+        case -1: // Decimal point was last character - count remaining digits.
+            count = str.length;
+            return count;
+
+        case -2: /* No decimal point. Remove trailing zeroes and count remaining 
+            digits. */
+            n = Number(str);
+            while (n != 0 && n % 10 == 0) n /= 10;
+            count = String(n).length;
+            return count;
+
+        default: /* Decimal point was neither first or last character. Remove 
+            leading zeroes againc(for the case when decimal point was the first 
+            character) and count remaining digits. */
+            str = removeLeadingZeroes(str);
+            count = str.length;
             return count;
     }
+}
+
+function removeLeadingZeroes(x) {
+    // Find index of first non-zero character.
+    let leadingZeroIndex;
+    let str = String(x);
+    let len = str.length;
+
+    for (i=0; i< len; i++) {
+        if (str[i] != '0') { /* Stops at first non-zero character including the
+            decimal point. */
+           leadingZeroIndex = i;
+           break;
+        }
+    }
+    // Remove leading zeroes.
+    /* for (i=leadingZeroIndex-1; i>=0; i--)  */
+        str = str.substring(leadingZeroIndex);
+    return str;
+}
+
+function fcPlaces(x) {
+    let str = String(x);
+    str = str.replace('-','');
+    str = removeLeadingZeroes(str);
+    str = str.replace('.', '');
+    return str.length;
 }
